@@ -1,4 +1,4 @@
-package com.skillip.flink.state;
+package com.skillip.flink.watermark;
 
 import com.skillip.flink.bean.WaterSensor;
 import org.apache.commons.lang3.StringUtils;
@@ -20,9 +20,8 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StateDemo {
-    private static final OutputTag<String> SIDE_OUTPUT = new OutputTag<String>("side-output") {
-    };
+public class SocketDemo {
+    private static final OutputTag<String> SIDE_OUTPUT = new OutputTag<String>("side-output") {};
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamContextEnvironment.getExecutionEnvironment()
@@ -71,6 +70,8 @@ public class StateDemo {
             @Override
             public void processElement(WaterSensor value, Context ctx, Collector<String> out) throws Exception {
                 String id = value.getId();
+                System.out.println(id);
+                System.out.println(tsMap);
                 long currentTime = ctx.timerService().currentProcessingTime();
 
                 if (!tsMap.containsKey(id) && vcMap.getOrDefault(id, Integer.MIN_VALUE) < value.getVc()) {
@@ -83,15 +84,13 @@ public class StateDemo {
                 }
                 vcMap.put(id, value.getVc());
             }
-
             @Override
             public void onTimer(long timestamp, OnTimerContext ctx, Collector<String> out) throws Exception {
                 ctx.output(SIDE_OUTPUT, "监控水位在10秒内连续不降");
             }
         }).getSideOutput(SIDE_OUTPUT);
 
-        WindowedStream<WaterSensor, String, TimeWindow> window = keyedStream
-                .window(TumblingEventTimeWindows.of(Time.seconds(5)));
+        WindowedStream<WaterSensor, String, TimeWindow> window = keyedStream.window(TumblingEventTimeWindows.of(Time.seconds(5)));
 
         SingleOutputStreamOperator<WaterSensor> result = window.sum("vc");
 
