@@ -3,8 +3,8 @@ package io.github.wanshicheng.flink.cdc;
 import com.ververica.cdc.connectors.mysql.source.MySqlSource;
 import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 import java.util.Properties;
 
@@ -28,6 +28,8 @@ public class FlinkCDCTableDemo {
                 .debeziumProperties(properties)
                 .deserializer(new JsonDebeziumDeserializationSchema()) // converts SourceRecord to JSON String
                 .build();
+
+        DataStreamSource<String> stringDataStreamSource = env.fromSource(mySqlSource, WatermarkStrategy.noWatermarks(), "MySQL Source");
 
         env.fromSource(mySqlSource, WatermarkStrategy.noWatermarks(), "MySQL Source")
                 .print().setParallelism(1);
