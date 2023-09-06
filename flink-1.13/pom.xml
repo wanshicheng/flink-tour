@@ -15,6 +15,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <flink.version>1.13.6</flink.version>
+        <scala.major>2.12</scala.major>
     </properties>
 
     <dependencies>
@@ -30,22 +31,22 @@
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-api-java-bridge_2.12</artifactId>
+            <artifactId>flink-table-api-java-bridge_${scala.major}</artifactId>
             <version>${flink.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-streaming-java_2.12</artifactId>
+            <artifactId>flink-streaming-java_${scala.major}</artifactId>
             <version>${flink.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients_2.12</artifactId>
+            <artifactId>flink-clients_${scala.major}</artifactId>
             <version>${flink.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-sql-client_2.12</artifactId>
+            <artifactId>flink-sql-client_${scala.major}</artifactId>
             <version>${flink.version}</version>
         </dependency>
         <dependency>
@@ -53,20 +54,13 @@
             <artifactId>flink-connector-mysql-cdc</artifactId>
             <version>2.2.1</version>
         </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.30</version>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.doris</groupId>
-            <artifactId>flink-doris-connector-1.13_2.12</artifactId>
+            <artifactId>flink-doris-connector-1.13_${scala.major}</artifactId>
             <version>1.0.3</version>
         </dependency>
     </dependencies>
