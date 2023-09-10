@@ -44,12 +44,16 @@
             <artifactId>flink-table-planner-loader</artifactId>
             <version>${flink.version}</version>
         </dependency>
-        <!--    flink-table-planner依赖只是为了调试代码方便，上面的loader有planner包    -->
+        <!--    flink-table-planner、flink-sql-parser依赖只是为了调试代码方便，上面的loader有planner包    -->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner_2.12</artifactId>
             <version>${flink.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-sql-parser</artifactId>
+            <version>${flink.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
