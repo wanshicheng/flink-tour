@@ -2,14 +2,17 @@ package io.github.wanshicheng.flink.time;
 
 import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
-import scala.tools.util.SocketServer;
+import org.apache.flink.util.OutputTag;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -47,7 +50,7 @@ public class DataLatenessTour {
         records.add(new SensorRecord("sensor01", 22D, 15001L));
 
         // 迟到数据
-        records.add(new SensorRecord("sensor01", 25D, 4950L));
+        records.add(new SensorRecord("sensor01", 25D, 4988L));
         records.add(new SensorRecord("sensor01", 22D, 15120L));
         try {
             ServerSocket server = new ServerSocket(port);
@@ -85,8 +88,11 @@ public class DataLatenessTour {
         env.setRuntimeMode(RuntimeExecutionMode.STREAMING);
 
         DataStreamSource<String> source = env.socketTextStream(host, port);
+
+        OutputTag<SensorRecord> latenessTag = new OutputTag<>("lateness", TypeInformation.of(SensorRecord.class));
+
         // 对数据流中的元素分配时间戳
-        source.map(elem -> {
+        SingleOutputStreamOperator<Object> result = source.map(elem -> {
                     String[] props = elem.split("\t");
                     String id = props[0];
                     Double temperature = Double.valueOf(props[1]);
@@ -100,6 +106,7 @@ public class DataLatenessTour {
                 .keyBy(SensorRecord::getId)
                 .window(TumblingEventTimeWindows.of(Time.seconds(5)))
 //                .allowedLateness(Time.seconds(15))
+                .sideOutputLateData(latenessTag)
                 .apply(new WindowFunction<SensorRecord, Object, String, TimeWindow>() {
                     @Override
                     public void apply(String key, TimeWindow window, Iterable<SensorRecord> input, Collector<Object> out) throws Exception {
@@ -110,11 +117,13 @@ public class DataLatenessTour {
                             cnt++;
                         }
                         System.out.println();
-                        out.collect(key +" window: ["+ window.getStart() + ", "+ window.getEnd()+"] temperature:" + sum / cnt);
+                        out.collect(key + " window: [" + window.getStart() + ", " + window.getEnd() + "] temperature:" + sum / cnt);
                     }
-                })
-                .print();
+                });
 
+        result.print();
+
+        result.getSideOutput(latenessTag).print();
         env.execute();
     }
 
