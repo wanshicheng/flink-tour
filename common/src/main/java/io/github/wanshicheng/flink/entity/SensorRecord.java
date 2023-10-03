@@ -1,4 +1,4 @@
-package io.github.wanshicheng.flink.time;
+package io.github.wanshicheng.flink.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
