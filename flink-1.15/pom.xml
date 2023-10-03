@@ -41,18 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-table-planner-loader</artifactId>
-            <version>${flink.version}</version>
-        </dependency>
-        <!--    flink-table-planner、flink-sql-parser依赖只是为了调试代码方便，上面的loader有planner包    -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner_2.12</artifactId>
-            <version>${flink.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-sql-parser</artifactId>
             <version>${flink.version}</version>
         </dependency>
         <dependency>
@@ -84,6 +73,15 @@
             <groupId>org.apache.doris</groupId>
             <artifactId>flink-doris-connector-1.15</artifactId>
             <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>2.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 </project>
